@@ -3,16 +3,11 @@ import { useFonts, MontserratAlternates_400Regular } from '@expo-google-fonts/mo
 import { Montserrat_500Medium } from '@expo-google-fonts/montserrat';
 import AppLoading from 'expo-app-loading';
 
-
 const Header = () => {
     const [fontsLoaded] = useFonts({
         MontserratAlternates_400Regular,
         Montserrat_500Medium
       });
-      
-      if (!fontsLoaded) {
-          return <AppLoading />;
-      }
 
     return(
         <View style={styles.headerContainer}>

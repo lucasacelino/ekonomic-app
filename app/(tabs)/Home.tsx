@@ -15,19 +15,13 @@ const Home = () => {
   const [valor, setValor] = useState("")
   const [listaDespesas, setListaDespesas] = useState([]);
 
-  // Função para adicionar despesa à lista
+  
   const adicionarDespesa = () => {
-    if (titulo.trim().length > 0) {
-      setListaDespesas([...listaDespesas, { titulo: titulo, valor: valor}]);
-      setTitulo('');
-      setValor('');
-      setModalVisible(false);
-    }
+    setListaDespesas([...listaDespesas, { titulo: titulo, valor: valor}]);
+    setTitulo('');
+    setValor('');
+    setModalVisible(false);
   };
-
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
 
   return (
     <SafeAreaView style={styles.container}>
