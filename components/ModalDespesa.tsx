@@ -42,7 +42,6 @@ const ModalDespesa = ({
             onPress={onSave}
           >
             <Text style={styles.textButton}>Salvar</Text>
-            {/* {editarDespesa ? "Salvar alterações" : "alvar"} */}
           </TouchableOpacity>
           {editarDespesa && (
             <TouchableOpacity

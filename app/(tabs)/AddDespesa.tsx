@@ -3,7 +3,7 @@ import ModalDespesa from "@/components/ModalDespesa";
 import { useState } from "react";
 import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-const TipoDespesa = () => {
+const AddDespesa = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [valor, setValor] = useState("");
   const [tituloDespesa, setTitulo] = useState(""); 
@@ -24,7 +24,7 @@ const TipoDespesa = () => {
   };
 
   const deletarDespesa = () => {
-    const novaLista = listaDespesas.filter((_, index) => index !== indiceDespesa);
+    const novaLista = listaDespesas.filter((item, index) => index !== indiceDespesa);
     setListaDespesas(novaLista);
     resetModal();
   };
@@ -62,7 +62,6 @@ const TipoDespesa = () => {
       <ModalDespesa
         visible={modalVisible}
         onClose={resetModal}
-        // onSave={adicionarDespesa}
         onSave={editarDespesa ? atualizarDespesa : adicionarDespesa}
         onDelete={deletarDespesa}
         editarDespesa={editarDespesa}
@@ -132,4 +131,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default TipoDespesa;
+export default AddDespesa;
