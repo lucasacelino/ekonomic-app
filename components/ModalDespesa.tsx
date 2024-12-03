@@ -4,9 +4,13 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from "reac
 const ModalDespesa = ({ 
   visible, 
   onClose, 
-  onSave, 
+  onSave,
+  onDelete,
+  editarDespesa,
   tituloDespesa, 
-  setTitulo 
+  setTitulo,
+  valor,
+  setValor
 }) => {
   return (
     <Modal
@@ -17,19 +21,37 @@ const ModalDespesa = ({
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Título da despesa</Text>
+          <Text style={styles.modalTitle}>
+            Titulo despesa
+          </Text>
           <TextInput
             style={styles.input}
             placeholder="Digite a despesa"
             value={tituloDespesa}
             onChangeText={setTitulo}
           />
+          <Text style={styles.modalTitle}>Valor da despesa</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite o valor"
+            value={valor}
+            onChangeText={setValor}
+          />
           <TouchableOpacity
             style={styles.saveButton}
             onPress={onSave}
           >
             <Text style={styles.textButton}>Salvar</Text>
+            {/* {editarDespesa ? "Salvar alterações" : "alvar"} */}
           </TouchableOpacity>
+          {editarDespesa && (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={onDelete}
+            >
+              <Text style={styles.textButton}>Excluir</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={onClose}
@@ -79,7 +101,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   cancelButton: {
-    backgroundColor: "#da2c38",
+    backgroundColor: "#9d0208",
     padding: 10,
     borderRadius: 5,
     width: "100%",
@@ -87,6 +109,14 @@ const styles = StyleSheet.create({
   },
   textButton: {
     color: "#FFFFFF",
+  },
+  deleteButton: {
+    backgroundColor: "#e63946",
+    padding: 10,
+    borderRadius: 5,
+    width: "100%",
+    alignItems: "center",
+    marginBottom: 10,
   },
 });
 
