@@ -1,18 +1,62 @@
 import Header from "@/components/Header";
 import ModalDespesa from "@/components/ModalDespesa";
-import { useState } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Location from "expo-location";
+import { useState, useEffect } from "react";
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
 
 const AddDespesa = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [valor, setValor] = useState("");
-  const [tituloDespesa, setTitulo] = useState(""); 
+  const [tituloDespesa, setTitulo] = useState("");
   const [listaDespesas, setListaDespesas] = useState([]);
   const [indiceDespesa, setIndice] = useState(null);
   const [editarDespesa, setEdicao] = useState(false);
+  const [localizacao, setLocalizacao] = useState(null);
+
+  useEffect(() => {
+    carregarDespesas();
+    obterLocalizacao();
+  }, []);
+
+  const carregarDespesas = async () => {
+    try {
+      const despesasSalvas = await AsyncStorage.getItem("despesas");
+      if (despesasSalvas) {
+        setListaDespesas(JSON.parse(despesasSalvas));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar despesas:", error);
+    }
+  };
+
+  const salvarDespesas = async (despesas) => {
+    try {
+      await AsyncStorage.setItem("despesas", JSON.stringify(despesas));
+    } catch (error) {
+      console.error("Erro ao salvar despesas:", error);
+    }
+  };
+
+  const obterLocalizacao = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permissão negada", "Não foi possível obter a localização.");
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      setLocalizacao(location.coords);
+    } catch (error) {
+      console.error("Erro ao obter localização:", error);
+    }
+  };
 
   const adicionarDespesa = () => {
-    setListaDespesas([...listaDespesas, {titulo: tituloDespesa, valor: valor}]);
+    const novaDespesa = { titulo: tituloDespesa, valor: valor };
+    const novaLista = [...listaDespesas, novaDespesa];
+    setListaDespesas(novaLista);
+    salvarDespesas(novaLista);
     resetModal();
   };
 
@@ -20,12 +64,14 @@ const AddDespesa = () => {
     const novaLista = [...listaDespesas];
     novaLista[indiceDespesa] = { titulo: tituloDespesa, valor: valor };
     setListaDespesas(novaLista);
+    salvarDespesas(novaLista);
     resetModal();
   };
 
   const deletarDespesa = () => {
     const novaLista = listaDespesas.filter((item, index) => index !== indiceDespesa);
     setListaDespesas(novaLista);
+    salvarDespesas(novaLista);
     resetModal();
   };
 
@@ -45,10 +91,16 @@ const AddDespesa = () => {
     setModalVisible(false);
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
       <Header />
+      {localizacao && (
+        <View style={styles.localizacaoContainer}>
+          <Text style={styles.localizacaoTexto}>
+            Localização atual: {localizacao.latitude.toFixed(2)}, {localizacao.longitude.toFixed(2)}
+          </Text>
+        </View>
+      )}
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
@@ -73,8 +125,8 @@ const AddDespesa = () => {
 
       <FlatList
         data={listaDespesas}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index}) => (
+        keyExtractor={(_, index) => index.toString()}
+        renderItem={({ item, index }) => (
           <TouchableOpacity onPress={() => abrirModalParaEditar(item, index)}>
             <View style={styles.item}>
               <Text style={styles.itemTitulo}>{item.titulo}</Text>
@@ -94,13 +146,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  localizacaoContainer: {
+    padding: 10,
+    backgroundColor: "#588157",
+    borderRadius: 4,
+    marginTop: 85,
+  },
+  localizacaoTexto: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    textAlign: "center",
+  },
   textButton: {
     color: "#FFFFFF",
     fontFamily: "Montserrat_500Medium",
   },
   button: {
     backgroundColor: "#226F54",
-    marginTop: 90,
+    marginTop: 30,
     justifyContent: "center",
     alignItems: "center",
     width: 200,
@@ -110,25 +173,25 @@ const styles = StyleSheet.create({
   item: {
     padding: 15,
     marginTop: 5,
-    backgroundColor: '#226F54',
+    backgroundColor: "#226F54",
     borderRadius: 4,
-    borderColor: '#25A18E',
+    borderColor: "#25A18E",
     marginBottom: 10,
     borderWidth: 3,
-    elevation: 2, 
+    elevation: 2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
   itemTitulo: {
     fontSize: 20,
-    color: '#FFFFFF',
-    fontWeight: "bold"
+    color: "#FFFFFF",
+    fontWeight: "bold",
   },
   itemValor: {
     fontSize: 16,
-    color: '#FFFFFF'
-  }
+    color: "#FFFFFF",
+  },
 });
 
 export default AddDespesa;
