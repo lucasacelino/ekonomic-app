@@ -3,7 +3,8 @@ import ModalDespesa from "@/components/ModalDespesa";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Alert } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import { Link as ExpoLink } from 'expo-router'; // Importe corretamente o Link do Expo Router
 
 const AddDespesa = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -135,6 +136,10 @@ const AddDespesa = () => {
           </TouchableOpacity>
         )}
       />
+
+      <ExpoLink href="/estatisticas" style={styles.link}>
+        <Text style={styles.linkText}>Ir para estatísticas</Text>
+      </ExpoLink>
     </SafeAreaView>
   );
 };
@@ -190,6 +195,19 @@ const styles = StyleSheet.create({
   },
   itemValor: {
     fontSize: 16,
+    color: "#FFFFFF",
+  },
+  link: {
+    backgroundColor: "#226F54",
+    borderRadius: 5,
+    width: 150,
+    padding: 16,
+    alignItems: "center",
+    marginBottom: 10,
+    textAlign: "center"
+    // marginTop: 20,
+  },
+  linkText: {
     color: "#FFFFFF",
   },
 });
